@@ -49,7 +49,7 @@ router.post("/", utils_1.eventValidation, utils_1.catchErrors, utils_1.isAuth, a
 });
 //ottieni gli eventi
 router.get("/", (0, express_validator_1.query)("name").optional().isString(), (0, express_validator_1.query)("location").optional().isString(), (0, express_validator_1.query)("date").optional().isString(), (0, express_validator_1.query)("price").optional().isNumeric(), (0, express_validator_1.query)("tickets").optional().isNumeric(), (0, express_validator_1.query)("kind").optional().isNumeric(), utils_1.catchErrors, async (req, res) => {
-    //per questa operazione basta essere semplicemente loggati
+    //per questa operazione non é necessaria autenticazione
     //semplice con find senza filtro
     const events = await Event_1.Event.find({ ...req.query }); //se ci sono query filtra
     //se non ci sono documents nella collection torna un array vuoto
@@ -59,7 +59,7 @@ router.get("/", (0, express_validator_1.query)("name").optional().isString(), (0
     return res.status(200).json(events);
 });
 //ottieni un evento
-router.get("/:id", (0, express_validator_1.check)("id").isString().notEmpty().withMessage("Id value not valid"), utils_1.catchErrors, utils_1.isAuth, async ({ params }, res) => {
+router.get("/:id", (0, express_validator_1.check)("id").isString().notEmpty().withMessage("Id value not valid"), utils_1.catchErrors, async ({ params }, res) => {
     const id = params.id;
     const reqEvent = await Event_1.Event.findById(id);
     if (!reqEvent) {
@@ -106,7 +106,7 @@ router.put("/:id/tickets", [
         reqEvent.tickets -= reqTickets;
         //salvo le modifiche
         await reqEvent.save();
-        //restituisco i biglietti acquistati
+        //e restituisco i biglietti acquistati
         return res.status(200).json({ purchased: reqTickets });
     }
     ;

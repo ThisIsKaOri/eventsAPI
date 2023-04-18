@@ -55,7 +55,7 @@ query("tickets").optional().isNumeric(),
 query("kind").optional().isNumeric(),
 catchErrors, 
 async (req: Request, res: Response) => {
-    //per questa operazione basta essere semplicemente loggati
+    //per questa operazione non é necessaria autenticazione
     //semplice con find senza filtro
     const events = await Event.find({...req.query});//se ci sono query filtra
     //se non ci sono documents nella collection torna un array vuoto
@@ -68,7 +68,7 @@ async (req: Request, res: Response) => {
 //ottieni un evento
 router.get("/:id", 
 check("id").isString().notEmpty().withMessage("Id value not valid"), 
-catchErrors, isAuth, 
+catchErrors, 
 async ({ params }: Request, res: Response) => {    
     const id = params.id;
     const reqEvent = await Event.findById(id);
@@ -120,7 +120,7 @@ async ({ params, body }: Request, res: Response) => {
         reqEvent.tickets -= reqTickets;
         //salvo le modifiche
         await reqEvent.save();
-        //restituisco i biglietti acquistati
+        //e restituisco i biglietti acquistati
         return res.status(200).json({purchased: reqTickets});
     };
     return res.status(401).json({message: "user not verified.."});
